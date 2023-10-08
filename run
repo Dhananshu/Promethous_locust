@@ -1,0 +1,37 @@
+1. pip install prometheus_client
+
+-----------------------------------------------------------------
+2.Add in locust file
+
+from prometheus_client import start_http_server, Counter, Summary
+from locust import HttpUser, task, between
+
+# Define Prometheus metrics
+requests_total = Counter('locust_requests_total', 'Total number of requests')
+response_time = Summary('locust_response_time_seconds', 'Response time in seconds')
+
+class MyUser(HttpUser):
+    wait_time = between(1, 3)
+
+    @task(1)
+    def my_task(self):
+        with response_time.time():
+            response = self.client.get('/my_endpoint')
+        requests_total.inc()
+
+3. start server in locust file 
+if __name__ == "__main__":
+    start_http_server(8000)  # Expose metrics on port 8000
+    MyUser().run()
+-----------------------------------------------------------------------------------------
+4. Add the target in .yaml file of promethous
+scrape_configs:
+  - job_name: 'locust'
+    static_configs:
+      - targets: ['localhost:8000']  # Target the address where your Locust metrics are exposed
+
+--------------------------------------------------------------------------------------------
+5. start promethous
+prometheus --config.file=prometheus.yml
+----------------------------------------------------------------------------
+6. usually promethous up at 9090 so check on that
