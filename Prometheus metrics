@@ -1,0 +1,15 @@
+1. counter : used where values always increases  (incremental values) : 
+   counter_name.inc()
+   counter_name.set()
+
+2. gauge: having both incremental and decremnetal values
+   gauge_name.inc()
+   gauge_name.dec()
+   gauge_name.set()
+
+3. summary:  used for finding response time
+    summary_name.time()
+
+4. histogram 
+
+ 
